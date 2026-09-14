@@ -1,2 +1,20 @@
 name: "main"
 scale_along_z: 0
+embedded_instances {
+  id: "bootstrap"
+  data: "components {\n"
+  "  id: \"bootstrap\"\n"
+  "  component: \"/scripts/bootstrap/bootstrap.script\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "gameProxy"
+  data: "embedded_components {\n"
+  "  id: \"collectionproxy\"\n"
+  "  type: \"collectionproxy\"\n"
+  "  data: \"collection: \\\"/game/game.collection\\\"\\n"
+  "\"\n"
+  "}\n"
+  ""
+}

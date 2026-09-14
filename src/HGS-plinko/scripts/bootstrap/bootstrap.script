@@ -1,0 +1,29 @@
+local pipeline = require "scripts.bootstrap.bootstrap_pipeline"
+
+-- Boostrap steps
+local load_game = require "scripts.bootstrap.steps.game_loading_step"
+
+function init(self)
+    print("Bootstrap started.")
+    local context = {}
+    
+        local steps = {
+            load_game
+        }
+    
+        pipeline.run(context, steps,
+        function(success, error)
+    
+            if not success then
+                print("Bootstrap failed: " .. error)
+                return
+            end
+    
+            print("Bootstrap completed")
+        end)
+end
+
+function on_message(self, message_id, message, sender)
+    print("Tracked message: " .. message_id)
+    pipeline.on_message(message_id, message, sender)
+end
