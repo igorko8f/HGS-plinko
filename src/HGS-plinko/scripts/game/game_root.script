@@ -2,7 +2,7 @@ local config = require('scripts.config.game_config')
 local render = require('scripts.render.game_render')
 
 local function build_scene_state()
-    local width, height = render.viewport_size()
+    local width, height = render.default_viewport_size()
     local root = render.root_position()
 
     return {
