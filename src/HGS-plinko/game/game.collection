@@ -1,7 +1,7 @@
 name: "game"
 scale_along_z: 0
 embedded_instances {
-  id: "go"
+  id: "background"
   data: "embedded_components {\n"
   "  id: \"sprite\"\n"
   "  type: \"sprite\"\n"
@@ -18,4 +18,12 @@ embedded_instances {
     x: 280.0
     y: 390.0
   }
+}
+embedded_instances {
+  id: "game_root"
+  data: "components {\n"
+  "  id: \"game_root\"\n"
+  "  component: \"/scripts/game/game_root.script\"\n"
+  "}\n"
+  ""
 }
