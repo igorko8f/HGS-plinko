@@ -5,17 +5,17 @@ embedded_instances {
   data: "embedded_components {\n"
   "  id: \"sprite\"\n"
   "  type: \"sprite\"\n"
-  "  data: \"default_animation: \\\"ball_1\\\"\\n"
+  "  data: \"default_animation: \\\"body\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
-  "  texture: \\\"/assets/textures/plinko.atlas\\\"\\n"
+  "  texture: \\\"/assets/textures/bg.atlas\\\"\\n"
   "}\\n"
   "\"\n"
-  "  position {\n"
-  "    x: 555.0\n"
-  "    y: 555.0\n"
-  "  }\n"
   "}\n"
   ""
+  position {
+    x: 280.0
+    y: 390.0
+  }
 }
