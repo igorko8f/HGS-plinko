@@ -1,0 +1,22 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+  "workspace": {
+    "library": [
+      "C:\\Users\\Igor\\AppData\\Local\\JetBrains\\Rider2026.1\\IntelliJ-Defold\\std\\latest\\defold_api"
+    ],
+    "checkThirdParty": false,
+    "ignoreDir": [
+      "debugger"
+    ]
+  },
+  "runtime": {
+    "version": "Lua 5.1",
+    "extensions": [
+      ".lua",
+      ".script",
+      ".gui_script",
+      ".render_script",
+      ".editor_script"
+    ]
+  }
+}
