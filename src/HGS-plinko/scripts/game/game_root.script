@@ -1,7 +1,6 @@
 local config = require('scripts.config.game_config')
 local render = require('scripts.render.game_render')
-
-local board_config = require("scripts.config.board_config")
+local board_config = require('scripts.config.board_config')
 local board_builder = require('scripts.game.board_builder')
 
 local function build_scene_state()
@@ -41,7 +40,7 @@ local function build_board(self)
     end
 
     local baskets = board_builder.build_basket_positions(board_config, config.basket_count, viewport)
-    local basket_scale = board_builder.basket_scale(board_config, config.basket_count)
+    local basket_scale = board_builder.basket_scale(board_config, config.basket_count, viewport)
     for _, position in ipairs(baskets) do
         factory.create('/board#basket_factory', position, nil, {}, basket_scale)
     end

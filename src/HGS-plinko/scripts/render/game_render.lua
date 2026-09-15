@@ -11,7 +11,6 @@ end
 
 function M.root_position()
     local width, height = M.default_viewport_size()
-
     return vmath.vector3(width * 0.5, height * 0.5, 0)
 end
 

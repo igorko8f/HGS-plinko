@@ -1,30 +1,25 @@
 local M = {}
 
 M.rows = 9
+M.columns = 9
 M.width = 560
 M.height = 780
 
 M.origin = {
     x = 0.5,
-    y = 0.62,
+    y = 0.8,
 }
 
 M.peg = {
-    spacing_x = 32,
-    spacing_y = 36,
-    scale = 0.35,
+    spacing_x = 52,
+    spacing_y = 56,
+    scale = 1,
 }
 
 M.basket = {
-    base_y = 72,
-    min_scale = 0.22,
-    max_scale = 0.9,
-}
-    
-M.hole = {
-    x = 0.5,
-    y = 0.92,
-    scale = 0.18,
+    base_width = 64,
+    base_y = 50,
+    cover_ratio = 0.95,
 }
 
 return M

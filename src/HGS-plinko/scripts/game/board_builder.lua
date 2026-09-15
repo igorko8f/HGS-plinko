@@ -46,12 +46,16 @@ function M.peg_scale(board_config)
     return peg.scale
 end
 
-function M.basket_scale(board_config, basket_count)
-    local count = basket_count
+function M.basket_scale(board_config, basket_count, viewport)
     local basket = board_config.basket
-    local min_scale = basket.min_scale
-    local max_scale = basket.max_scale
-    return math.max(min_scale, math.min(max_scale, 1.75 / math.sqrt(count)))
+    local count = basket_count
+    local base_width = basket.base_width
+    local cover_ratio = basket.cover_ratio
+
+    local desired_width = (viewport.width / count) * cover_ratio
+    local scale = desired_width / base_width
+
+    return scale
 end
 
 return M
