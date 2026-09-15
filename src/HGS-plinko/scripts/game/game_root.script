@@ -1,6 +1,9 @@
 local config = require('scripts.config.game_config')
 local render = require('scripts.render.game_render')
 
+local board_config = require("scripts.config.board_config")
+local board_builder = require('scripts.game.board_builder')
+
 local function build_scene_state()
     local width, height = render.default_viewport_size()
     local root = render.root_position()
@@ -11,7 +14,7 @@ local function build_scene_state()
             initial_balls = config.initial_balls,
             regeneration = config.regeneration,
             basket_count = config.basket_count,
-            board = config.board,
+            board = board_config,
         },
         viewport = {
             width = width,
@@ -25,7 +28,31 @@ local function build_scene_state()
     }
 end
 
+local function build_board(self)
+    local width, height = render.default_viewport_size()
+    local viewport = {
+        width = width,
+        height = height,
+    }
+
+    local pegs = board_builder.build_peg_positions(board_config, viewport)
+    for _, position in ipairs(pegs) do
+        factory.create('/board#peg_factory', position, nil, {}, board_builder.peg_scale(board_config))
+    end
+
+    local baskets = board_builder.build_basket_positions(board_config, config.basket_count, viewport)
+    local basket_scale = board_builder.basket_scale(board_config, config.basket_count)
+    for _, position in ipairs(baskets) do
+        factory.create('/board#basket_factory', position, nil, {}, basket_scale)
+    end
+end
+
 local function emit_ready(self)
+    if not self.board_built then
+        build_board(self)
+        self.board_built = true
+    end
+
     self.scene = build_scene_state()
     msg.post(".", "ready", { scene = self.scene })
 end

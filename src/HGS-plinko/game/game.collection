@@ -17,6 +17,7 @@ embedded_instances {
   position {
     x: 280.0
     y: 390.0
+    z: -0.5
   }
 }
 embedded_instances {
@@ -26,4 +27,55 @@ embedded_instances {
   "  component: \"/scripts/game/game_root.script\"\n"
   "}\n"
   ""
+}
+embedded_instances {
+  id: "drop_hole"
+  data: "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"ball_3\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "blend_mode: BLEND_MODE_MULT\\n"
+  "size {\\n"
+  "  x: 44.0\\n"
+  "  y: 44.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/assets/textures/plinko.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"ball_factory\"\n"
+  "  type: \"factory\"\n"
+  "  data: \"prototype: \\\"/game/ball.go\\\"\\n"
+  "\"\n"
+  "}\n"
+  ""
+  position {
+    x: 280.0
+    y: 720.0
+    z: 0.5
+  }
+}
+embedded_instances {
+  id: "board"
+  data: "embedded_components {\n"
+  "  id: \"peg_factory\"\n"
+  "  type: \"factory\"\n"
+  "  data: \"prototype: \\\"/game/peg.go\\\"\\n"
+  "\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"basket_factory\"\n"
+  "  type: \"factory\"\n"
+  "  data: \"prototype: \\\"/game/basket.go\\\"\\n"
+  "\"\n"
+  "}\n"
+  ""
+  position {
+    x: 280.0
+    y: 390.0
+  }
 }

@@ -1,8 +1,10 @@
+local config = require("scripts.config.board_config")
+
 local M = {}
 
 function M.default_viewport_size()
-    local width = tonumber(sys.get_config("display.width"))
-    local height = tonumber(sys.get_config("display.height"))
+    local width = sys.get_config_int("display.width", config.width)
+    local height = sys.get_config_int("display.height", config.height)
     
     return width, height
 end

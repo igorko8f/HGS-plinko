@@ -1,9 +1,12 @@
 local M = {}
 
 M.initial_balls = 10
-M.regeneration_interval = 1
-M.regeneration_balls_count = 3
-M.basket_count = 4
+M.regeneration = {
+    enabled = true,
+    interval = 1,
+    balls_count = 3,
+}
+M.basket_count = 10
 
 M.baskets = {
     {
@@ -46,13 +49,6 @@ M.baskets = {
         probability = 0.5,
         score = 10
     }
-}
-
-M.board = {
-    rows = 9,
-    columns = 9,
-    width = 560,
-    height = 780,
 }
 
 return M
