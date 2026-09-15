@@ -1,0 +1,52 @@
+local simulation = require("scripts.game.ball_simulation")
+
+local function apply_transform(self)
+    go.set_position(self.state.position)
+    go.set(".", "euler.z", self.state.rotation)
+end
+
+local function notify_phase(self, previous_phase)
+    if previous_phase ~= self.state.phase then
+        msg.post(self.owner, "ball_phase_changed", {
+            ball_id = go.get_id(),
+            phase = hash(self.state.phase),
+            previous_phase = hash(previous_phase),
+        })
+    end
+end
+
+function init(self)
+    self.owner = nil
+    self.state = nil
+    msg.post(".", "disable")
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("start_simulation") then
+        self.owner = message.owner
+        self.state = simulation.create(message.path, message.config)
+        apply_transform(self)
+        msg.post(".", "enable")
+    end
+end
+
+function update(self, dt)
+    if self.state == nil then
+        return
+    end
+
+    local previous_phase = self.state.phase
+    simulation.update(self.state, dt)
+    apply_transform(self)
+    notify_phase(self, previous_phase)
+
+    if self.state.landed then
+        msg.post(self.owner, "ball_landed", {
+            ball_id = go.get_id(),
+            bucket_index = self.state.landing_bucket_index,
+            path = self.state.path,
+        })
+        self.state = nil
+        go.delete()
+    end
+end

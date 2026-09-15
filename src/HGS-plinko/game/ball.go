@@ -1,3 +1,7 @@
+components {
+  id: "ball"
+  component: "/scripts/game/ball.script"
+}
 embedded_components {
   id: "sprite"
   type: "sprite"

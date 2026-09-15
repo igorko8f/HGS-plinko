@@ -11,7 +11,7 @@ function on_input(self, action_id, action)
     if action_id == hash("click") and action.pressed then
         if self.run_button ~= nil and gui.pick_node(self.run_button, action.x, action.y) then
             animate_run_button(self.run_button)
-            print("Run button pressed")
+            msg.post("game:/game_root", "spawn_ball")
         end
     end
 end

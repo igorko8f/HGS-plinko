@@ -1,7 +1,61 @@
 local config = require('scripts.config.game_config')
 local render = require('scripts.render.game_render')
 local board_config = require('scripts.config.board_config')
+local ball_simulation_config = require('scripts.config.ball_simulation_config')
 local board_builder = require('scripts.game.board_builder')
+local path_generator = require('scripts.game.plinko_path')
+
+local function next_seed(self)
+    self.path_seed = (self.path_seed or 0) + 1
+    return self.path_seed
+end
+
+local function clamp(value, min_value, max_value)
+    return math.max(min_value, math.min(max_value, value))
+end
+
+local function select_bucket_index(self)
+    local rng = path_generator.create_rng(next_seed(self) * 131)
+    return path_generator.select_bucket_index(
+        self.board_state.baskets,
+        config.baskets,
+        rng
+    )
+end
+
+local function create_board_state(viewport, basket_count)
+    return {
+        spawn = board_builder.build_spawn_position(board_config, viewport),
+        pegs = board_builder.build_peg_grid(board_config, viewport),
+        baskets = board_builder.build_basket_nodes(board_config, basket_count, viewport),
+    }
+end
+
+local function spawn_ball(self, bucket_index)
+    if self.scene == nil or self.board_state == nil then
+        return
+    end
+
+    local target_bucket_index = clamp(bucket_index or select_bucket_index(self), 1, self.scene.config.basket_count)
+    local seed = next_seed(self)
+    local path = path_generator.generate(self.board_state, target_bucket_index, seed)
+    local ball_id = factory.create('/drop_hole#ball_factory', self.board_state.spawn)
+    self.active_balls[ball_id] = {
+        path = path,
+        bucket_index = target_bucket_index,
+    }
+    msg.post(ball_id, 'start_simulation', {
+        owner = msg.url(),
+        path = path,
+        config = self.scene.config.ball_simulation,
+    })
+end
+
+local function spawn_initial_balls(self)
+    for _ = 1, self.scene.config.initial_balls do
+        spawn_ball(self)
+    end
+end
 
 local function build_scene_state()
     local width, height = render.default_viewport_size()
@@ -13,6 +67,7 @@ local function build_scene_state()
             initial_balls = config.initial_balls,
             regeneration = config.regeneration,
             basket_count = config.basket_count,
+            ball_simulation = ball_simulation_config,
             board = board_config,
         },
         viewport = {
@@ -33,6 +88,7 @@ local function build_board(self)
         width = width,
         height = height,
     }
+    self.board_state = create_board_state(viewport, config.basket_count)
 
     local pegs = board_builder.build_peg_positions(board_config, viewport)
     for _, position in ipairs(pegs) do
@@ -57,11 +113,24 @@ local function emit_ready(self)
 end
 
 function init(self)
+    self.active_balls = {}
+    self.path_seed = 0
     emit_ready(self)
+    spawn_initial_balls(self)
 end
 
 function on_message(self, message_id, message, sender)
     if message_id == hash("proxy_loaded") or message_id == hash("proxy_enabled") or message_id == hash("enable") then
         emit_ready(self)
+    elseif message_id == hash("spawn_ball") then
+        spawn_ball(self, message.bucket_index)
+    elseif message_id == hash("ball_landed") then
+        self.active_balls[message.ball_id] = nil
+        print(string.format("Ball landed in basket %d", message.bucket_index))
+        if self.scene.config.regeneration.enabled then
+            for _ = 1, self.scene.config.regeneration.balls_count do
+                spawn_ball(self)
+            end
+        end
     end
 end

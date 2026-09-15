@@ -10,6 +10,10 @@ M.origin = {
     y = 0.8,
 }
 
+M.spawn = {
+    y = 720,
+}
+
 M.peg = {
     spacing_x = 52,
     spacing_y = 56,
