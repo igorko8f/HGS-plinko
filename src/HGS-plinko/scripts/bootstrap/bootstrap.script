@@ -5,22 +5,23 @@ local render_setup = require "scripts.bootstrap.steps.render_setup_step"
 local load_game = require "scripts.bootstrap.steps.game_loading_step"
 
 function init(self)
+    
     local context = {}
     
-        local steps = {
-            render_setup,
-            load_game
-        }
+    local steps = {
+        render_setup,
+        load_game
+    }
     
-        pipeline.run(context, steps,
-        function(success, error)
-    
-            if not success then
-                print("Bootstrap failed: " .. error)
-                return
-            end
-    
-            print("Bootstrap completed")
+    pipeline.run(context, steps,
+    function(success, error)
+
+        if not success then
+            print("Bootstrap failed: " .. error)
+            return
+        end
+
+        print("Bootstrap completed")
         end)
 end
 

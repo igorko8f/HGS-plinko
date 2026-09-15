@@ -1,7 +1,17 @@
-images {
-  image: "/assets/textures/btn_green_normal.png"
-}
-images {
-  image: "/assets/textures/btn_green_push.png"
+animations {
+  id: "press_anim"
+  images {
+    image: "/assets/textures/btn_green_normal.png"
+  }
+  images {
+    image: "/assets/textures/btn_green_push.png"
+  }
+  images {
+    image: "/assets/textures/btn_green_push.png"
+  }
+  images {
+    image: "/assets/textures/btn_green_push.png"
+  }
+  playback: PLAYBACK_ONCE_BACKWARD
 }
 extrude_borders: 2

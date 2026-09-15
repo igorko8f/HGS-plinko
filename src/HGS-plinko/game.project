@@ -22,3 +22,9 @@ scale_mode = stretch
 [project]
 title = HGS-plinko
 
+[input]
+use_accelerometer = 0
+game_binding = /input/game.input_bindingc
+gamepad_database = /builtins/input/gamecontrollerdb.txt
+gamepads = /builtins/input/default.gamepadsc
+
