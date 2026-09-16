@@ -82,47 +82,72 @@ function M.generate(board_state, bucket_index, seed)
     local peg_grid = board_state.pegs
     local baskets = board_state.baskets
     local rows = #peg_grid
+
     local target = math_utils.clamp(bucket_index, 1, #baskets)
     local rng = math_utils.create_rng(seed)
-    local path_nodes = {
-        create_spawn_node(board_state.spawn),
+
+    local reverse_nodes = {
+        create_terminal_node(
+            baskets[target].pos,
+            target,
+            baskets[target].row,
+            baskets[target].col
+        ),
     }
-    local cursor = 1
 
-    for row = 1, rows do
+    -- Начинаем с колонки выбранной корзины.
+    local cursor = target
+
+    for row = rows, 1, -1 do
+        local target_cursor = math_utils.clamp(cursor, 1, row)
         local next_cursor = cursor
-        local steps_remaining = rows - row
-        local target_cursor = math_utils.clamp(target, 1, row + 1)
 
-        if next_cursor < target_cursor then
-            next_cursor = next_cursor + 1
-        elseif next_cursor > target_cursor then
+        if next_cursor > target_cursor then
             next_cursor = next_cursor - 1
+        elseif next_cursor < target_cursor then
+            next_cursor = next_cursor + 1
         else
-            local min_target = math.max(1, target - steps_remaining)
-            local max_target = math.min(row + 1, target)
-            local can_move_right = next_cursor < row and target <= max_target
-            local can_stay_left = target >= min_target
+           
+            local can_move_left = cursor > 1
+            local can_move_right = cursor < row
 
-            if can_move_right and can_stay_left and rng() > 0.5 then
-                next_cursor = next_cursor + 1
+            if can_move_left and can_move_right then
+                if rng() > 0.5 then
+                    next_cursor = cursor - 1
+                else
+                    next_cursor = cursor
+                end
+            elseif can_move_left then
+                next_cursor = cursor - 1
+            elseif can_move_right then
+                next_cursor = cursor + 1
             end
         end
 
-        local peg_col = math_utils.clamp(cursor, 1, row)
-        local exit_dir = next_cursor > cursor and EXIT_RIGHT or EXIT_LEFT
+        local peg_col = math_utils.clamp(next_cursor, 1, row)
         local peg_node = peg_grid[row][peg_col]
-        path_nodes[#path_nodes + 1] = create_path_node(peg_node, exit_dir)
+
+        local exit_dir
+
+        if next_cursor > cursor then
+            exit_dir = EXIT_RIGHT
+        else
+            exit_dir = EXIT_LEFT
+        end
+
+        reverse_nodes[#reverse_nodes + 1] =
+            create_path_node(peg_node, exit_dir)
+
         cursor = next_cursor
     end
 
-    local basket_node = baskets[target]
-    path_nodes[#path_nodes + 1] = create_terminal_node(
-        basket_node.pos,
-        target,
-        basket_node.row,
-        basket_node.col
-    )
+    local path_nodes = {}
+
+    for i = #reverse_nodes, 1, -1 do
+        path_nodes[#path_nodes + 1] = reverse_nodes[i]
+    end
+
+    path_nodes[1] = create_spawn_node(board_state.spawn)
 
     return {
         seed = seed,
