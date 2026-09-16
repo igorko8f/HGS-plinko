@@ -1,3 +1,9 @@
+images {
+  image: "/assets/textures/plus.png"
+}
+images {
+  image: "/assets/textures/remove.png"
+}
 animations {
   id: "press_anim"
   images {

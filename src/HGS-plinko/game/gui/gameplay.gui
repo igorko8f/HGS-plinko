@@ -1,22 +1,226 @@
 script: "/scripts/gui/gameplay.gui_script"
 fonts {
-  name: "default"
-  font: "/builtins/fonts/default.font"
+  name: "default1"
+  font: "/assets/font/default.font"
 }
 textures {
-  name: "green_btn"
-  texture: "/assets/textures/green_btn.atlas"
+  name: "gui"
+  texture: "/assets/textures/gui.atlas"
 }
 nodes {
   position {
     x: 104.0
-    y: 707.0
+    y: 737.0
+  }
+  size {
+    x: 66.0
+    y: 64.0
   }
   type: TYPE_BOX
-  texture: "green_btn/press_anim"
+  texture: "gui/press_anim"
   id: "run_button"
   inherit_alpha: true
-  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: 6.0
+  }
+  scale {
+    x: 0.8
+    y: 0.8
+  }
+  size {
+    x: 50.0
+    y: 45.0
+  }
+  type: TYPE_TEXT
+  text: "0"
+  font: "default1"
+  id: "curent_balls_value_text"
+  parent: "run_button"
+  inherit_alpha: true
+  alpha: 0.93
+}
+nodes {
+  position {
+    x: 103.0
+    y: 690.0
+  }
+  size {
+    x: 70.0
+    y: 40.0
+  }
+  type: TYPE_TEXT
+  text: "0"
+  font: "default1"
+  id: "current_balls_to_play"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 156.0
+    y: 690.0
+  }
+  size {
+    x: 32.0
+    y: 32.0
+  }
+  type: TYPE_BOX
+  texture: "gui/plus"
+  id: "add_ball_button"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 50.0
+    y: 690.0
+  }
+  size {
+    x: 32.0
+    y: 32.0
+  }
+  type: TYPE_BOX
+  texture: "gui/remove"
+  id: "remove_ball_button"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 459.0
+    y: 743.0
+  }
+  size {
+    x: 200.0
+    y: 50.0
+  }
+  type: TYPE_TEXT
+  text: "Score:"
+  font: "default1"
+  id: "score_text"
+  xanchor: XANCHOR_RIGHT
+  yanchor: YANCHOR_TOP
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -53.0
+  }
+  size {
+    x: 200.0
+    y: 50.0
+  }
+  type: TYPE_TEXT
+  text: "0"
+  font: "default1"
+  id: "score_value_text"
+  parent: "score_text"
+  inherit_alpha: true
+  alpha: 0.93
+}
+nodes {
+  position {
+    x: 441.0
+    y: 634.0
+  }
+  scale {
+    x: 0.8
+    y: 0.8
+  }
+  size {
+    x: 66.0
+    y: 64.0
+  }
+  color {
+    y: 0.0
+    z: 0.0
+  }
+  type: TYPE_BOX
+  texture: "gui/press_anim"
+  id: "add_balls_1"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -0.75
+    y: 5.0
+  }
+  scale {
+    x: 0.8
+    y: 0.8
+  }
+  size {
+    x: 50.0
+    y: 50.0
+  }
+  type: TYPE_TEXT
+  text: "+1"
+  font: "default1"
+  id: "text"
+  parent: "add_balls_1"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 516.0
+    y: 634.0
+  }
+  scale {
+    x: 0.8
+    y: 0.8
+  }
+  size {
+    x: 66.0
+    y: 64.0
+  }
+  color {
+    y: 0.0
+    z: 0.0
+  }
+  type: TYPE_BOX
+  texture: "gui/press_anim"
+  id: "add_balls_10"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -1.0
+    y: 4.0
+  }
+  scale {
+    x: 0.8
+    y: 0.8
+  }
+  size {
+    x: 50.0
+    y: 50.0
+  }
+  type: TYPE_TEXT
+  text: "+10"
+  font: "default1"
+  id: "text1"
+  parent: "add_balls_10"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 117.0
+    y: 655.0
+  }
+  scale {
+    x: 0.5
+    y: 0.5
+  }
+  size {
+    x: 448.0
+    y: 36.0
+  }
+  type: TYPE_TEXT
+  text: "+3 balls in "
+  font: "default1"
+  id: "recovery_timer_text"
+  xanchor: XANCHOR_RIGHT
+  yanchor: YANCHOR_TOP
+  inherit_alpha: true
 }
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT

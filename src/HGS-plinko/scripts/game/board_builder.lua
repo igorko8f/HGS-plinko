@@ -68,7 +68,7 @@ function M.build_basket_positions(board_config, basket_count, viewport)
 
     for i = 1, count do
         local x = (i - 0.5) * slot_width
-        positions[#positions + 1] = vmath.vector3(x, y, 0.2)
+        positions[#positions + 1] = vmath.vector3(x, y, 0.6)
     end
 
     return positions

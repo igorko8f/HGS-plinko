@@ -30,6 +30,8 @@ local function create_spawn_node(position)
 end
 
 local function create_terminal_node(position, bucket_index, row, col)
+    position.z = math_utils.clamp(position.z, 0.0, 0.5)
+    
     return {
         type = "terminal",
         pos = vmath.vector3(position),
