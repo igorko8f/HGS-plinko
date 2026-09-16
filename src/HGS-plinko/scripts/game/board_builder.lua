@@ -1,3 +1,5 @@
+-- Computes board layout (peg grid, basket slots, spawn point) in screen
+-- coordinates for a given viewport size. Pure geometry — no gameplay state.
 local M = {}
 
 local function board_origin(board_config, viewport)
@@ -12,27 +14,6 @@ local function build_node(node_type, position, row, col)
         row = row,
         col = col,
     }
-end
-
-function M.build_peg_positions(board_config, viewport)
-    local rows = board_config.rows
-    local peg = board_config.peg
-    local peg_spacing_x = peg.spacing_x
-    local peg_spacing_y = peg.spacing_y
-    local center_x, top_y = board_origin(board_config, viewport)
-    local positions = {}
-
-    for row = 1, rows do
-        local count = row
-        local y = top_y - (row - 1) * peg_spacing_y
-        local start_x = center_x - ((count - 1) * peg_spacing_x) * 0.5
-
-        for i = 1, count do
-            positions[#positions + 1] = vmath.vector3(start_x + (i - 1) * peg_spacing_x, y, 0.2)
-        end
-    end
-
-    return positions
 end
 
 function M.build_peg_grid(board_config, viewport)
@@ -62,6 +43,20 @@ function M.build_peg_grid(board_config, viewport)
     end
 
     return grid
+end
+
+function M.build_peg_positions(board_config, viewport)
+    -- Reuses build_peg_grid instead of recomputing peg layout math, so the
+    -- two never drift out of sync with each other.
+    local positions = {}
+
+    for _, row_nodes in ipairs(M.build_peg_grid(board_config, viewport)) do
+        for _, node in ipairs(row_nodes) do
+            positions[#positions + 1] = node.pos
+        end
+    end
+
+    return positions
 end
 
 function M.build_basket_positions(board_config, basket_count, viewport)

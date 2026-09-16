@@ -17,15 +17,8 @@ M.steering = {
 }
 
 M.jitter = {
-    bounce_angle = 0.08,
     speed_ratio = 0.06,
 }
 
-M.spin = {
-    velocity_to_angular = 0.065,
-    bounce_impulse = 0.11,
-    damping = 6,
-    max_angular_velocity = 12,
-}
 
 return M

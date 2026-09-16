@@ -1,17 +1,16 @@
+-- Scene owner: builds the static board (pegs/baskets) once, spawns balls on
+-- request, and reports scene/config state to the GUI and other listeners.
 local config = require('scripts.config.game_config')
 local render = require('scripts.render.game_render')
 local board_config = require('scripts.config.board_config')
 local ball_simulation_config = require('scripts.config.ball_simulation_config')
 local board_builder = require('scripts.game.board_builder')
 local path_generator = require('scripts.game.plinko_path')
+local math_utils = require('scripts.helpers.math_utils')
 
 local function next_seed(self)
     self.path_seed = (self.path_seed or 0) + 1
     return self.path_seed
-end
-
-local function clamp(value, min_value, max_value)
-    return math.max(min_value, math.min(max_value, value))
 end
 
 local function select_bucket_index(self)
@@ -39,7 +38,7 @@ local function spawn_ball(self, bucket_index)
         return
     end
 
-    local target_bucket_index = clamp(bucket_index or select_bucket_index(self), 1, self.scene.config.basket_count)
+    local target_bucket_index = math_utils.clamp(bucket_index or select_bucket_index(self), 1, self.scene.config.basket_count)
     local seed = next_seed(self)
     local path = path_generator.generate(self.board_state, target_bucket_index, seed)
     local ball_id = factory.create('/drop_hole#ball_factory', self.board_state.spawn)
@@ -54,8 +53,12 @@ local function spawn_ball(self, bucket_index)
     })
 end
 
-local function build_scene_state()
+local function get_viewport()
     local width, height = render.default_viewport_size()
+    return { width = width, height = height }
+end
+
+local function build_scene_state(viewport)
     local root = render.root_position()
 
     return {
@@ -67,10 +70,7 @@ local function build_scene_state()
             ball_simulation = ball_simulation_config,
             board = board_config,
         },
-        viewport = {
-            width = width,
-            height = height,
-        },
+        viewport = viewport,
         root = {
             x = root.x,
             y = root.y,
@@ -79,12 +79,7 @@ local function build_scene_state()
     }
 end
 
-local function build_board(self)
-    local width, height = render.default_viewport_size()
-    local viewport = {
-        width = width,
-        height = height,
-    }
+local function build_board(self, viewport)
     self.board_state = create_board_state(viewport, config.basket_count)
 
     local pegs = board_builder.build_peg_positions(board_config, viewport)
@@ -100,12 +95,14 @@ local function build_board(self)
 end
 
 local function emit_ready(self)
+    local viewport = get_viewport()
+
     if not self.board_built then
-        build_board(self)
+        build_board(self, viewport)
         self.board_built = true
     end
 
-    self.scene = build_scene_state()
+    self.scene = build_scene_state(viewport)
     msg.post(".", "ready", { scene = self.scene })
 end
 
@@ -116,9 +113,7 @@ function init(self)
 end
 
 function on_message(self, message_id, message, sender)
-    if message_id == hash("proxy_loaded") or message_id == hash("proxy_enabled") or message_id == hash("enable") then
-        emit_ready(self)
-    elseif message_id == hash("spawn_ball") then
+    if message_id == hash("spawn_ball") then
         spawn_ball(self, message.bucket_index)
     elseif message_id == hash("ball_landed") then
         local ball = self.active_balls[message.ball_id]

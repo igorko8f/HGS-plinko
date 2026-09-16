@@ -2,7 +2,6 @@ local simulation = require("scripts.game.ball_simulation")
 
 local function apply_transform(self)
     go.set_position(self.state.position)
-    go.set(".", "euler.z", self.state.rotation)
 end
 
 local function notify_phase(self, previous_phase)

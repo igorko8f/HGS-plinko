@@ -1,23 +1,13 @@
+-- Generates the sequence of board nodes (spawn -> pegs -> basket) a ball
+-- will be steered along, and picks which basket a new ball should target
+-- based on configured basket probabilities. The physical bounce/steering
+-- simulation lives in ball_simulation.lua.
+local math_utils = require("scripts.helpers.math_utils")
+
 local M = {}
 
 local EXIT_LEFT = -1
 local EXIT_RIGHT = 1
-
-local function clamp(value, min_value, max_value)
-    return math.max(min_value, math.min(max_value, value))
-end
-
-local function create_rng(seed)
-    local state = seed % 2147483647
-    if state <= 0 then
-        state = state + 2147483646
-    end
-
-    return function()
-        state = (state * 48271) % 2147483647
-        return state / 2147483647
-    end
-end
 
 local function copy_node(node)
     local result = {
@@ -60,7 +50,7 @@ local function create_path_node(node, exit_dir)
 end
 
 function M.create_rng(seed)
-    return create_rng(seed)
+    return math_utils.create_rng(seed)
 end
 
 function M.select_bucket_index(baskets, weights, rng)
@@ -92,8 +82,8 @@ function M.generate(board_state, bucket_index, seed)
     local peg_grid = board_state.pegs
     local baskets = board_state.baskets
     local rows = #peg_grid
-    local target = clamp(bucket_index, 1, #baskets)
-    local rng = create_rng(seed)
+    local target = math_utils.clamp(bucket_index, 1, #baskets)
+    local rng = math_utils.create_rng(seed)
     local path_nodes = {
         create_spawn_node(board_state.spawn),
     }
@@ -102,7 +92,7 @@ function M.generate(board_state, bucket_index, seed)
     for row = 1, rows do
         local next_cursor = cursor
         local steps_remaining = rows - row
-        local target_cursor = clamp(target, 1, row + 1)
+        local target_cursor = math_utils.clamp(target, 1, row + 1)
 
         if next_cursor < target_cursor then
             next_cursor = next_cursor + 1
@@ -119,7 +109,7 @@ function M.generate(board_state, bucket_index, seed)
             end
         end
 
-        local peg_col = clamp(cursor, 1, row)
+        local peg_col = math_utils.clamp(cursor, 1, row)
         local exit_dir = next_cursor > cursor and EXIT_RIGHT or EXIT_LEFT
         local peg_node = peg_grid[row][peg_col]
         path_nodes[#path_nodes + 1] = create_path_node(peg_node, exit_dir)
