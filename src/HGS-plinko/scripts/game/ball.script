@@ -44,7 +44,6 @@ function update(self, dt)
         msg.post(self.owner, "ball_landed", {
             ball_id = go.get_id(),
             bucket_index = self.state.landing_bucket_index,
-            path = self.state.path,
         })
         self.state = nil
         go.delete()

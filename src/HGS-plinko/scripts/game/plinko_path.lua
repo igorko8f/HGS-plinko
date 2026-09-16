@@ -119,7 +119,7 @@ function M.generate(board_state, bucket_index, seed)
             end
         end
 
-        local peg_col = math.max(1, math.min(row, next_cursor == cursor and cursor or next_cursor - 1))
+        local peg_col = clamp(cursor, 1, row)
         local exit_dir = next_cursor > cursor and EXIT_RIGHT or EXIT_LEFT
         local peg_node = peg_grid[row][peg_col]
         path_nodes[#path_nodes + 1] = create_path_node(peg_node, exit_dir)

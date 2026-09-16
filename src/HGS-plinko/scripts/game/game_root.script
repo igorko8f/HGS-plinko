@@ -45,16 +45,10 @@ local function spawn_ball(self, bucket_index)
         bucket_index = target_bucket_index,
     }
     msg.post(ball_id, 'start_simulation', {
-        owner = msg.url(),
+        owner = msg.url("#"),
         path = path,
         config = self.scene.config.ball_simulation,
     })
-end
-
-local function spawn_initial_balls(self)
-    for _ = 1, self.scene.config.initial_balls do
-        spawn_ball(self)
-    end
 end
 
 local function build_scene_state()
@@ -116,7 +110,6 @@ function init(self)
     self.active_balls = {}
     self.path_seed = 0
     emit_ready(self)
-    spawn_initial_balls(self)
 end
 
 function on_message(self, message_id, message, sender)
@@ -125,12 +118,9 @@ function on_message(self, message_id, message, sender)
     elseif message_id == hash("spawn_ball") then
         spawn_ball(self, message.bucket_index)
     elseif message_id == hash("ball_landed") then
+        local ball = self.active_balls[message.ball_id]
+        local bucket_index = message.bucket_index or (ball and ball.bucket_index)
         self.active_balls[message.ball_id] = nil
-        print(string.format("Ball landed in basket %d", message.bucket_index))
-        if self.scene.config.regeneration.enabled then
-            for _ = 1, self.scene.config.regeneration.balls_count do
-                spawn_ball(self)
-            end
-        end
+        print(string.format("Ball landed in basket %d", bucket_index or -1))
     end
 end
