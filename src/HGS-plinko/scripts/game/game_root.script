@@ -15,11 +15,14 @@ local function clamp(value, min_value, max_value)
 end
 
 local function select_bucket_index(self)
-    local rng = path_generator.create_rng(next_seed(self) * 131)
+    if self.bucket_rng == nil then
+        self.bucket_rng = path_generator.create_rng(os.time() + next_seed(self) * 131)
+    end
+
     return path_generator.select_bucket_index(
         self.board_state.baskets,
         config.baskets,
-        rng
+        self.bucket_rng
     )
 end
 
