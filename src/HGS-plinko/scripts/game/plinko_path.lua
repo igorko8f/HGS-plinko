@@ -1,7 +1,3 @@
--- Generates the sequence of board nodes (spawn -> pegs -> basket) a ball
--- will be steered along, and picks which basket a new ball should target
--- based on configured basket probabilities. The physical bounce/steering
--- simulation lives in ball_simulation.lua.
 local math_utils = require("scripts.helpers.math_utils")
 
 local M = {}

@@ -1,5 +1,8 @@
 local simulation = require("scripts.game.ball_simulation")
 
+go.property("jump_speed", 450)
+go.property("jump_height", 35)
+
 local function apply_transform(self)
     go.set_position(self.state.position)
 end
@@ -14,17 +17,32 @@ local function notify_phase(self, previous_phase)
     end
 end
 
+local function create_simulation_config(self)
+    return 
+    {
+        speed = self.jump_speed,
+        height = self.jump_height
+    }
+end
+
 function init(self)
     self.owner = nil
     self.state = nil
+
     msg.post(".", "disable")
 end
 
 function on_message(self, message_id, message, sender)
     if message_id == hash("start_simulation") then
         self.owner = message.owner
-        self.state = simulation.create(message.path, message.config)
+
+        self.state = simulation.create(
+            message.path,
+            create_simulation_config(self)
+        )
+
         apply_transform(self)
+
         msg.post(".", "enable")
     end
 end
@@ -35,7 +53,9 @@ function update(self, dt)
     end
 
     local previous_phase = self.state.phase
+
     simulation.update(self.state, dt)
+
     apply_transform(self)
     notify_phase(self, previous_phase)
 
@@ -44,7 +64,9 @@ function update(self, dt)
             ball_id = go.get_id(),
             bucket_index = self.state.landing_bucket_index,
         })
+
         self.state = nil
+
         go.delete()
     end
 end

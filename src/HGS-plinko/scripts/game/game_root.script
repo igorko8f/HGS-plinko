@@ -3,7 +3,6 @@
 local config = require('scripts.config.game_config')
 local render = require('scripts.render.game_render')
 local board_config = require('scripts.config.board_config')
-local ball_simulation_config = require('scripts.config.ball_simulation_config')
 local board_builder = require('scripts.game.board_builder')
 local path_generator = require('scripts.game.plinko_path')
 local math_utils = require('scripts.helpers.math_utils')
@@ -49,7 +48,6 @@ local function spawn_ball(self, bucket_index)
     msg.post(ball_id, 'start_simulation', {
         owner = msg.url("#"),
         path = path,
-        config = self.scene.config.ball_simulation,
     })
 end
 
@@ -67,7 +65,6 @@ local function build_scene_state(viewport)
             initial_balls = config.initial_balls,
             regeneration = config.regeneration,
             basket_count = config.basket_count,
-            ball_simulation = ball_simulation_config,
             board = board_config,
         },
         viewport = viewport,
