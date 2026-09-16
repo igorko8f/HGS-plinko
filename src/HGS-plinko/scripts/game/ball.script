@@ -2,6 +2,8 @@ local simulation = require("scripts.game.ball_simulation")
 
 go.property("jump_speed", 450)
 go.property("jump_height", 35)
+go.property("jump_landing_offset", 15)
+go.property("time_scale", 1.0)
 
 local function apply_transform(self)
     go.set_position(self.state.position)
@@ -21,7 +23,8 @@ local function create_simulation_config(self)
     return 
     {
         speed = self.jump_speed,
-        height = self.jump_height
+        height = self.jump_height,
+        landing_offset = self.jump_landing_offset,
     }
 end
 
@@ -54,7 +57,7 @@ function update(self, dt)
 
     local previous_phase = self.state.phase
 
-    simulation.update(self.state, dt)
+    simulation.update(self.state, dt * self.time_scale)
 
     apply_transform(self)
     notify_phase(self, previous_phase)

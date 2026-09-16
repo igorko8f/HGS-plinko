@@ -17,16 +17,25 @@ local function calculate_jump_position(from, to, t, height)
     return position
 end
 
+local function get_visual_target(node, config)
+    local position = vmath.vector3(node.pos)
+
+    if node.type == "peg" then
+        position.y = position.y + config.landing_offset
+    end
+
+    return position
+end
+
 local function begin_jump(state)
-    local from_node = state.path.nodes[state.node_index - 1]
     local target_node = state.path.nodes[state.node_index]
 
-    if not from_node or not target_node then
+    if not target_node then
         return false
     end
 
-    state.jump.from = vmath.vector3(from_node.pos)
-    state.jump.to = vmath.vector3(target_node.pos)
+    state.jump.from = vmath.vector3(state.position)
+    state.jump.to = get_visual_target(target_node, state.config)
 
     state.jump.elapsed = 0
 
@@ -43,7 +52,7 @@ end
 
 local function finish_jump(state)
     local target = state.path.nodes[state.node_index]
-    state.position = vmath.vector3(target.pos)
+    state.position = vmath.vector3(state.jump.to)
 
     if target.type == "terminal" then
         state.phase = "landed"

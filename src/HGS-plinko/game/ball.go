@@ -1,6 +1,16 @@
 components {
   id: "ball"
   component: "/scripts/game/ball.script"
+  properties {
+    id: "jump_landing_offset"
+    value: "20.0"
+    type: PROPERTY_TYPE_NUMBER
+  }
+  properties {
+    id: "time_scale"
+    value: "1.0"
+    type: PROPERTY_TYPE_NUMBER
+  }
 }
 embedded_components {
   id: "sprite"
