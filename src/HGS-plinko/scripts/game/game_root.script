@@ -23,16 +23,16 @@ local function select_bucket_index(self)
     )
 end
 
-local function create_board_state(viewport, basket_count)
+local function create_board_state(viewport)
     return {
         spawn = board_builder.build_spawn_position(board_config, viewport),
         pegs = board_builder.build_peg_grid(board_config, viewport),
-        baskets = board_builder.build_basket_nodes(board_config, basket_count, viewport),
+        baskets = board_builder.build_basket_nodes(board_config, config.baskets, viewport),
     }
 end
 
 local function spawn_ball(self)
-    local target_bucket_index = math_utils.clamp(select_bucket_index(self), 1, config.basket_count)
+    local target_bucket_index = math_utils.clamp(select_bucket_index(self), 1, #config.baskets)
     local seed = next_seed(self)
     local path = path_generator.generate(self.board_state, target_bucket_index, seed)
     local ball_id = factory.create('/drop_hole#ball_factory', self.board_state.spawn)
@@ -72,17 +72,18 @@ local function build_scene_state(viewport)
 end
 
 local function build_board(self, viewport)
-    self.board_state = create_board_state(viewport, config.basket_count)
+    self.board_state = create_board_state(viewport)
 
     local pegs = board_builder.build_peg_positions(board_config, viewport)
     for _, position in ipairs(pegs) do
         factory.create('/board#peg_factory', position, nil, {}, board_builder.peg_scale(board_config))
     end
 
-    local baskets = board_builder.build_basket_positions(board_config, config.basket_count, viewport)
-    local basket_scale = board_builder.basket_scale(board_config, config.basket_count, viewport)
-    for _, position in ipairs(baskets) do
-        factory.create('/board#basket_factory', position, nil, {}, basket_scale)
+    local baskets = board_builder.build_basket_positions(board_config, config.baskets, viewport)
+    local basket_scale = board_builder.basket_scale(board_config, #config.baskets, viewport)
+    for _, info in ipairs(baskets) do
+        local basket_go = factory.create('/board#basket_factory', info.position, nil, {}, basket_scale)
+        msg.post(basket_go, "setup", { config = info.config })
     end
 end
 
@@ -110,7 +111,8 @@ function on_message(self, message_id, message, sender)
     elseif message_id == hash("ball_landed") then
         local ball = self.active_balls[message.ball_id]
         local bucket_index = message.bucket_index or (ball and ball.bucket_index)
+        local bucket_config = config.baskets[bucket_index]
         self.active_balls[message.ball_id] = nil
-        print(string.format("Ball landed in basket %d", bucket_index or -1))
+        msg.post(".", "add_score", { amount = bucket_config.score })
     end
 end

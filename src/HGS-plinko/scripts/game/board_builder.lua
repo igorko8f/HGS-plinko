@@ -55,27 +55,31 @@ function M.build_peg_positions(board_config, viewport)
     return positions
 end
 
-function M.build_basket_positions(board_config, basket_count, viewport)
+function M.build_basket_positions(board_config, basket_config, viewport)
     local positions = {}
-    local count = basket_count
+    local count = #basket_config
     local slot_width = viewport.width / count
     local basket = board_config.basket
     local y = basket.base_y
 
-    for i = 1, count do
+    for i, config in ipairs(basket_config) do
         local x = (i - 0.5) * slot_width
-        positions[#positions + 1] = vmath.vector3(x, y, 0.6)
+        positions[#positions + 1] = 
+        {
+            position = vmath.vector3(x, y, 0.6),
+            config = config
+        }
     end
 
     return positions
 end
 
-function M.build_basket_nodes(board_config, basket_count, viewport)
-    local positions = M.build_basket_positions(board_config, basket_count, viewport)
+function M.build_basket_nodes(board_config, basket_config, viewport)
+    local positions = M.build_basket_positions(board_config, basket_config, viewport)
     local nodes = {}
 
-    for i, position in ipairs(positions) do
-        nodes[i] = build_node("basket", position, board_config.rows + 1, i)
+    for i, info in ipairs(positions) do
+        nodes[i] = build_node("basket", info.position, board_config.rows + 1, i)
         nodes[i].bucket_index = i
     end
 

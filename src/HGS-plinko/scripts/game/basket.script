@@ -1,8 +1,9 @@
-﻿function init(self)
-    
-end
-
 function on_message(self, message_id, message, sender)
-    
+    if message_id == hash("setup") then
+        self.score = message.config.score
+        msg.post("#score_text", "set_text", {
+            text = string.format("+%d", self.score)
+        })
+    end
 end
 

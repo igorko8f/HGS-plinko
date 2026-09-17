@@ -51,6 +51,10 @@ function on_message(self, message_id, message, sender)
         msg.post("game:/GUI#gameplay", "update_current_balls_text")
         changed = true
         
+    elseif message_id == hash("add_score") then
+        data.add_score(message.amount)
+        msg.post("game:/GUI#gameplay", "update_score_text")
+        changed = true
     end
 
     if changed then
