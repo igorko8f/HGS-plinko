@@ -97,8 +97,6 @@ nodes {
   text: "Score:"
   font: "default1"
   id: "score_text"
-  xanchor: XANCHOR_RIGHT
-  yanchor: YANCHOR_TOP
   inherit_alpha: true
 }
 nodes {
@@ -218,8 +216,6 @@ nodes {
   text: "+3 balls in "
   font: "default1"
   id: "recovery_timer_text"
-  xanchor: XANCHOR_RIGHT
-  yanchor: YANCHOR_TOP
   inherit_alpha: true
 }
 material: "/builtins/materials/gui.material"
