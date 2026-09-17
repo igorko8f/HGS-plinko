@@ -7,7 +7,9 @@ local data = {
     score = 0,
     balls_count = config.initial_balls,
     recovery_end_time = (os.time() + config.regeneration.interval),
-    balls_for_play_count = 1
+    balls_for_play_count = 1,
+    total_hits = 0,
+    basket_hits = {}
 }
 
 function M.get_score()
@@ -46,6 +48,18 @@ function M.get_recovery_time_left()
     return math.max(0, data.recovery_end_time - os.time())
 end
 
+function M.get_debug_data()
+    return {
+        total_hits = data.total_hits,
+        basket_hits = data.basket_hits
+    }
+end
+
+function M.add_bucket_hit(basket_index)
+    data.basket_hits[basket_index] = (data.basket_hits[basket_index] or 0) + 1
+    data.total_hits = data.total_hits + 1
+end
+
 function M.get_data()
     return data
 end
@@ -59,6 +73,8 @@ function M.set_data(saved_data)
     data.balls_count = saved_data.balls_count or config.initial_balls
     data.recovery_end_time = saved_data.recovery_end_time or (os.time() + config.regeneration.interval)
     data.balls_for_play_count = saved_data.balls_for_play_count or 1
+    data.total_hits = saved_data.total_hits or 0
+    data.basket_hits = saved_data.basket_hits or {}
 end
 
 return M

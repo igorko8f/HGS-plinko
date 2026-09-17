@@ -114,5 +114,6 @@ function on_message(self, message_id, message, sender)
         local bucket_config = config.baskets[bucket_index]
         self.active_balls[message.ball_id] = nil
         msg.post(".", "add_score", { amount = bucket_config.score })
+        msg.post(".", "track_hit", { bucket_index = bucket_index })
     end
 end

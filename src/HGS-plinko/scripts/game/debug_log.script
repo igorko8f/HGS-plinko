@@ -1,0 +1,35 @@
+local data = require("scripts.data.game_data")
+local config = require("scripts.config.game_config")
+
+function init(self)
+    self.update_required = true
+end
+
+function update(self, dt)
+    
+    local lines = {}
+    local hits_data = data.get_debug_data()
+    
+    for i = 1, #config.baskets do
+        local percentage = 0
+        local hits = hits_data.basket_hits[i] or 0
+        
+        if hits_data.total_hits > 0 then
+            percentage = hits / hits_data.total_hits * 100
+        end
+        
+        local line = string.format("Basket %d: %d balls (%.1f%%)",i,hits,percentage)
+        table.insert(lines, line)
+    end
+    
+    table.insert(lines, "----------------------")
+    table.insert(lines, string.format("Total: %d", hits_data.total_hits))
+    table.insert(lines, string.format("Score: %d", data.get_score()))
+    
+    msg.post("@render:", "draw_text", {
+        text = table.concat(lines, "\n"),
+        position = vmath.vector3(10, 580, 0)
+    })
+    
+    self.update_required = false
+end

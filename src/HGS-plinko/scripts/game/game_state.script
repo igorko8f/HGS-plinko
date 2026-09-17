@@ -2,6 +2,7 @@ local data = require('scripts.data.game_data')
 local saves = require("scripts.data.save_system")
 local config = require("scripts.config.game_config")
 
+local SAVE_INTERVAL = 3
 local RECOVERY_INTERVAL = config.regeneration.interval
 
 local function run_new_recovery_loop(self, current_time)
@@ -9,25 +10,45 @@ local function run_new_recovery_loop(self, current_time)
     self.next_recovery_time = current_time + RECOVERY_INTERVAL
     data.set_recovery_end_time(self.next_recovery_time)
          
-    saves.save()
+    saves.mark_dirty()
     msg.post("game:/GUI#gameplay", "ball_recovered")
 end
 
+local function update_recovery_timer(self)
+    local current_time = os.time()
+    if current_time < self.next_recovery_time then
+        return
+    end
+    
+    if data.get_balls_count() >= config.maximum_balls then
+        return
+    end
+        
+    run_new_recovery_loop(self, current_time)
+end
+
+local function update_saves_timer(self, dt)
+     self.save_timer = self.save_timer + dt
+    
+    if self.save_timer >= 5 then
+        self.save_timer = 0
+        saves.save_if_dirty()
+    end
+end
+
 function init(self)
+    self.save_timer = 0
+    
     local current_time = os.time()
     self.next_recovery_time = data.get_recovery_end_time()
-    if (current_time >= self.next_recovery_time) then
+    if current_time >= self.next_recovery_time and data.get_balls_count() < config.maximum_balls then
         run_new_recovery_loop(self, current_time)
     end
 end
 
 function update(self, dt)
-    local current_time = os.time()
-    if current_time < self.next_recovery_time then
-            return
-    end
-    
-    run_new_recovery_loop(self, current_time)
+    update_recovery_timer(self)
+    update_saves_timer(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
@@ -55,9 +76,17 @@ function on_message(self, message_id, message, sender)
         data.add_score(message.amount)
         msg.post("game:/GUI#gameplay", "update_score_text")
         changed = true
+    
+    elseif message_id == hash("track_hit") then
+        data.add_bucket_hit(message.bucket_index)
+        changed = true
     end
 
     if changed then
-        saves.save()
+        saves.mark_dirty()
     end
+end
+
+function final(self)
+    saves.save_if_dirty()
 end
