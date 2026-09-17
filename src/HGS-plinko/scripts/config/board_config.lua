@@ -1,7 +1,6 @@
 local M = {}
 
 M.rows = 9
-M.columns = 9
 M.width = 560
 M.height = 780
 

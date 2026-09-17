@@ -10,7 +10,7 @@ local function run_new_recovery_loop(self, current_time)
     data.set_recovery_end_time(self.next_recovery_time)
          
     saves.save()
-    msg.post(".", "ball_recovered")
+    msg.post("game:/GUI#gameplay", "ball_recovered")
 end
 
 function init(self)
