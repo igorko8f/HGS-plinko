@@ -3,6 +3,7 @@ local pipeline = require "scripts.bootstrap.bootstrap_pipeline"
 -- Boostrap steps
 local render_setup = require "scripts.bootstrap.steps.render_setup_step"
 local load_game = require "scripts.bootstrap.steps.game_loading_step"
+local load_saves = require "scripts.bootstrap.steps.saves_load_step"
 
 function init(self)
     
@@ -10,6 +11,7 @@ function init(self)
     
     local steps = {
         render_setup,
+        load_saves,
         load_game
     }
     

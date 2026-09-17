@@ -1,0 +1,59 @@
+local data = require('scripts.data.game_data')
+local saves = require("scripts.data.save_system")
+local config = require("scripts.config.game_config")
+
+local RECOVERY_INTERVAL = config.regeneration.interval
+
+local function run_new_recovery_loop(self, current_time)
+    data.add_balls(config.regeneration.balls_count)
+    self.next_recovery_time = current_time + RECOVERY_INTERVAL
+    data.set_recovery_end_time(self.next_recovery_time)
+         
+    saves.save()
+    msg.post(".", "ball_recovered")
+end
+
+function init(self)
+    local current_time = os.time()
+    self.next_recovery_time = data.get_recovery_end_time()
+    if (current_time >= self.next_recovery_time) then
+        run_new_recovery_loop(self, current_time)
+    end
+end
+
+function update(self, dt)
+    local current_time = os.time()
+    if current_time < self.next_recovery_time then
+            return
+    end
+    
+    run_new_recovery_loop(self, current_time)
+end
+
+function on_message(self, message_id, message, sender)
+    local changed = false
+    
+    if message_id == hash("remove_balls") then
+        
+        data.add_balls(-message.amount)
+        msg.post("game:/GUI#gameplay", "update_current_balls_text")
+        changed = true
+            
+    elseif message_id == hash("add_playing_ball") then
+        
+        data.add_playable_balls_count(message.amount)
+        msg.post("game:/GUI#gameplay", "update_playing_balls_text")
+        changed = true
+        
+    elseif message_id == hash("add_ball") then
+        
+        data.add_balls(message.amount)
+        msg.post("game:/GUI#gameplay", "update_current_balls_text")
+        changed = true
+        
+    end
+
+    if changed then
+        saves.save()
+    end
+end

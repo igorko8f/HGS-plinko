@@ -1,7 +1,3 @@
--- Generic sequential step-runner used by bootstrap.script. Each step is a
--- table with run(context, complete) and handle_message(context, message_id);
--- steps run one after another and the whole pipeline fails fast if any step
--- reports failure.
 local Pipeline = {}
 
 local function validate_step(step, index)

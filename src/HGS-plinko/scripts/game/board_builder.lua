@@ -1,5 +1,3 @@
--- Computes board layout (peg grid, basket slots, spawn point) in screen
--- coordinates for a given viewport size. Pure geometry — no gameplay state.
 local M = {}
 
 local function board_origin(board_config, viewport)
@@ -46,8 +44,6 @@ function M.build_peg_grid(board_config, viewport)
 end
 
 function M.build_peg_positions(board_config, viewport)
-    -- Reuses build_peg_grid instead of recomputing peg layout math, so the
-    -- two never drift out of sync with each other.
     local positions = {}
 
     for _, row_nodes in ipairs(M.build_peg_grid(board_config, viewport)) do

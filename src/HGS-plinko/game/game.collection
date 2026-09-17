@@ -26,6 +26,10 @@ embedded_instances {
   "  id: \"game_root\"\n"
   "  component: \"/scripts/game/game_root.script\"\n"
   "}\n"
+  "components {\n"
+  "  id: \"game_state\"\n"
+  "  component: \"/scripts/game/game_state.script\"\n"
+  "}\n"
   ""
 }
 embedded_instances {

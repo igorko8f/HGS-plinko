@@ -1,9 +1,9 @@
 local M = {}
 
 M.initial_balls = 10
+M.maximum_balls = 10
 M.regeneration = {
-    enabled = true,
-    interval = 1,
+    interval = 180,
     balls_count = 3,
 }
 M.basket_count = 10
